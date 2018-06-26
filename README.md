@@ -2,8 +2,8 @@
 *orbuculum* is a simple utility that hooks into the build process and creates a *compilation database file*. Compilation database contains information about compilation options (include paths, defines, flags) which is useful for *IDEs* to generete a source code *index* that is 'proper' - no more blindly grepping through the source code.
 
 Compilation database can be generated in 2 formats
-- clang's `compile_commands.json` - easy to import in *CLion* IDE
-- CMakeLists.txt - easy to import in *Eclipse*, *QTCreator* and more
+- clang's `compile_commands.json` - can be imported to *CLion* IDE
+- `CMakeLists.txt` - can be used by *Eclipse*, *QTCreator* and more
 
 By default only `compile_commands.json` database file is generated. To generate it *orbuculum* uses [bear](https://github.com/rizsotto/Bear). When `--json2cmake` option is provided, *orbuculum* will use [json2cmake](https://github.com/AbigailBuccaneer/json2cmake)
 
