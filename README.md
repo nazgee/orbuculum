@@ -1,5 +1,5 @@
 # Orbuculum
-Utility that hooks into the build process and creates a compilation database file. Compilation database allows IDEs to generete a source code *index* that is proper -- it knows what includes are used and what flags were passed to the compiler to create an object file.
+*orbuculum* is a simple utility that hooks into the build process and creates a *compilation database file*. Compilation database contains information about compilation options (include paths, defines, flags) which is useful for *IDEs* to generete a source code *index* that is 'proper' - no more blindly grepping through the source code.
 
 Compilation database can be generated in 2 formats
 - clang's `compile_commands.json` - easy to import in *CLion* IDE
@@ -16,6 +16,11 @@ python -m json2cmake.__init__
 ```
 
 # Usage
+There are 2 steps needed to work with properly *indexed* source code:
+- generate compilation database
+- import database to your IDE
+
+## Generating compilation database
 To create a super-project database for 3 *AOSP* projects:
 ```
 $ orbuculum.sh --out ~/myproj/compile_commands.json surfaceflinger hwcomposer.ranchu libgui
@@ -41,16 +46,33 @@ $ cat ~/myproj/compile_commands.json | wc -l
 ```
 **note:** After updating compilation database file, it should be reloaded in the IDE
 
+## Importing compilation database
+### CLion
+*CLion* version *2018.2* uses `compile_commands.json`. Details are described [here](https://blog.jetbrains.com/clion/2018/05/clion-2018-2-eap-open-project-from-compilation-database/), but in general:
+- Select 'Open' point it to your 'compile_commands.json' (**note:** file name is important - other names will not work)
+- Click 'Open as a project'
+- Done!
+
+Optionally, to 'unflatten' the files view (and be able to open the rest of project files, not only these that are present in database)
+- Go to `Tools` --> `Compilation Database` --> `Change Project Roots` and point to project's root (e.g. *AOSP* root directory)
+- Wait
+### Eclipse
+TBD
+*Eclipse* can use `CMakeLists.txt`.
+### QTCreator
+TBD
+*Eclipse* can use `CMakeLists.txt`.
+
 # Troubleshooting
-## database not generated for MODULE
+## Database not generated for MODULE
 If project was already build, `make MODULE` invoked by *orbuculum* will not do anything -- specifically, compiler will not be invoked.
 To force *MODULE* rebuild `--clean` option can be added to *orbuculum* invocation:
 ```
 orbuculum.sh --clean --out ~/myproj/compile_commands.json MODULE
 ```
-`--clean` option forces  *orbuculum* to invoke `make clean-MODULE` before invoking `make MODULE`. In *AOSP*  project this will _usually_ result in full module rebuild (unfortunately, AOSP does not accept `-B` flag anymore...).
+`--clean` option forces  *orbuculum* to invoke `make clean-MODULE` before invoking `make MODULE`. In *AOSP*  project this will _usually_ result in full module rebuild (unfortunately, *AOSP* does not accept passing `-B` option to `make` anymore).
 
-## database not generated for MODULE even with `--clean` option
+## Database not generated for MODULE even with `--clean` option
 Some of the *AOSP* projects do not properly handle *clean*, for example `make clean-libgui` does not clean `.o` files. Instead of attempting to fix it, one can *touch* every source file before attempting a build, which will force full rebuild next time `make MODULE` is invoked. *orbuculum* has a tool called `pervert.sh` that *touches* every source code file in given directory.
 
 To rebuild a clean non-compliant module:
