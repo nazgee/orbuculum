@@ -1,10 +1,22 @@
-# orbuculum
-Hooks to the build process and creates a compilation database file.
+# Orbuculum
+Utility that hooks into the build process and creates a compilation database file. Compilation database allows IDEs to generete a source code *index* that is proper -- it knows what includes are used and what flags were passed to the compiler to create an object file.
 
-Internally uses https://github.com/rizsotto/Bear to create `compile_commands.json` that can be parsed by *CLion* IDE.
+Compilation database can be generated in 2 formats
+- clang's `compile_commands.json` - easy to import in *CLion* IDE
+- CMakeLists.txt - easy to import in *Eclipse*, *QTCreator* and more
 
-# sample usage
-To create a super-project from 3 *AOSP* projects:
+By default only `compile_commands.json` database file is generated. To generate it *orbuculum* uses [bear](https://github.com/rizsotto/Bear). When `--json2cmake` option is provided, *orbuculum* will use [json2cmake](https://github.com/AbigailBuccaneer/json2cmake)
+
+# Prerequisites
+- [bear](https://github.com/rizsotto/Bear) - download, compile & install: `git clone https://github.com/rizsotto/Bear; cd Bear; cmake; make; sudo make install`
+- [json2cmake](https://github.com/AbigailBuccaneer/json2cmake) install: `pip install --user json2cmake` and create a `json2cmake` executable with the following contents:
+```bash
+#!/bin/bash
+python -m json2cmake.__init__
+```
+
+# Usage
+To create a super-project database for 3 *AOSP* projects:
 ```
 $ orbuculum.sh --out ~/myproj/compile_commands.json surfaceflinger hwcomposer.ranchu libgui
 >>> BuildEAR'ing 'surfaceflinger'
@@ -16,20 +28,20 @@ $ orbuculum.sh --out ~/myproj/compile_commands.json surfaceflinger hwcomposer.ra
 - libgui
 >>> Output: '~/myproj/compile_commands.json'
 ```
-This creates a `~/myproj/compile_commands.json` database file that can be imported into an IDE.
+This creates a `~/myproj/compile_commands.json` database file that can be imported into an IDE. If `~/myproj/CMakeLists.txt` is desired, add `--json2cmake` option.
 
-If *orbuculum* is re-run for *ANOTHERM_MODULE*, the compilation database file will be **extended** with new data:
+If *orbuculum* is re-run for *ANOTHER_MODULE*, the compilation database file will be **extended** with new data:
 ```
 $ cat ~/myproj/compile_commands.json | wc -l
 1626
-$ orbuculum.sh --out ~/myproj/compile_commands.json ANOTHER MODULE
+$ orbuculum.sh --out ~/myproj/compile_commands.json ANOTHER_MODULE
 ...
 $ cat ~/myproj/compile_commands.json | wc -l
 1844
 ```
-**note:** After updating compilation database file, it should be reloaded in the IDE.
+**note:** After updating compilation database file, it should be reloaded in the IDE
 
-# troubleshooting
+# Troubleshooting
 ## database not generated for MODULE
 If project was already build, `make MODULE` invoked by *orbuculum* will not do anything -- specifically, compiler will not be invoked.
 To force *MODULE* rebuild `--clean` option can be added to *orbuculum* invocation:
@@ -46,6 +58,6 @@ To rebuild a clean non-compliant module:
 pervert.sh ./path/to/MODULE
 orbuculum.sh --out ~/myproj/compile_commands.json MODULE
 ```
-**note:** `--clean` is not needed when `pervert.sh` is used.
+**note:** `--clean` is not needed when `pervert.sh` is used
 
 

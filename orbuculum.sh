@@ -15,6 +15,7 @@ _OUTPUT=$ANDROID_BUILD_TOP/out/development/compile_commands.json
 _CLEAN=0
 _SHOWCOMMANDS=""
 _VERBOSE=0
+_JSON2CMAKE=0
 
 function conditionalprintf() {
 	if [ "$1" == "1" ]; then
@@ -89,6 +90,9 @@ do
 	--clean)
 		_CLEAN=1
 		;;
+	--json2cmake)
+		_JSON2CMAKE=1
+		;;
         --out)
 		_OUTPUT="$2"
 		shift
@@ -119,6 +123,14 @@ do
 	# insert newline
 	echo
 done
+
+if [ $_JSON2CMAKE -eq 1 ]; then
+	printf "${GREEN}>>> Running json2cmake in${NC} `dirname $_OUTPUT`\n"
+	cd `dirname $_OUTPUT`
+	json2cmake
+	printffail "${RED}>>> json2cmake failed -- have you installed it?${NC}\n"
+	cd -
+fi
 
 printf "${GREEN}>>> Completede BuildEAR'ing of:${NC}\n"
 printf "${PURPLE}- %s${NC}\n" "${_TARGETS[@]}"
