@@ -62,20 +62,14 @@ SYNOPSIS:
 ARGS:
     --verbose     \tshow invoked commands
     --clean       \tinvoke 'make clean-MODULE' before invoking 'make MODULE'
+    --json2cmake  \tgenerate 'CMakeLists.txt' in addition to 'compile_commands.json'
     --out FILENAME\tspecify a location of compilation-output instead of using default
 
-Example:
-  `basename $0` --clean --out ~/workspace/aosp/compile_commands.json surfaceflinger hwcomposer.ranchu
-
-To import in compilation database in 'CLion' IDE:
-- Select 'Open' in CLion and point it to your 'compile_commands.json'
-- Click 'Open as a project'
-- Done!
-
-Optional (to 'unflatten' the files view, takes a lot of time):
-- Import project as usual
-- Go to 'Tools->Compilation Database->Change Project Roots' and point to AOSP root
-- Wait
+Examples:
+- Generate 'compile_commands.json' for 2 targets; clean before build:
+    $ `basename $0` --clean --out ~/workspace/aosp/compile_commands.json surfaceflinger hwcomposer.ranchu
+- Generate 'compile_commands.json' and 'CMakeLists.txt' for 'libgui':
+    $ `basename $0` --json2cmake --out ~/workspace/aosp/compile_commands.json libgui
 "
 
 test $# -gt 0
