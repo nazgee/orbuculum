@@ -1,11 +1,11 @@
 # Orbuculum
-*orbuculum* is a simple utility that hooks into the build process and creates a *compilation database file*. Compilation database contains information about compilation options (include paths, defines, flags) which is useful for *IDEs* to generete a source code *index* that is 'proper' - no more blindly grepping through the source code.
+*orbuculum* is a simple utility that hooks into the build process and creates a *compilation database file*. Compilation database contains information about compilation options (include paths, defines, flags) which is useful for *IDEs* to generete a source code index that is 'proper' - no more blindly grepping through the source code and wondering which `#ifdef` is correct.
 
 Compilation database can be generated in 2 formats
 - clang's `compile_commands.json` - can be imported to *CLion* IDE
 - `CMakeLists.txt` - can be used by *Eclipse*, *QTCreator* and more
 
-By default only `compile_commands.json` database file is generated. To generate it *orbuculum* uses [bear](https://github.com/rizsotto/Bear). When `--json2cmake` option is provided, *orbuculum* will use [json2cmake](https://github.com/AbigailBuccaneer/json2cmake)
+By default only `compile_commands.json` database file is generated. To generate it *orbuculum* uses [bear](https://github.com/rizsotto/Bear). When given `--json2cmake` option, *orbuculum* will use [json2cmake](https://github.com/AbigailBuccaneer/json2cmake) to additionally generate `CMakeLists.txt` file.
 
 # Prerequisites
 - [bear](https://github.com/rizsotto/Bear) - download, compile & install: `git clone https://github.com/rizsotto/Bear; cd Bear; cmake; make; sudo make install`
@@ -17,8 +17,8 @@ python -m json2cmake.__init__
 
 # Usage
 There are 2 steps needed to work with properly *indexed* source code:
-- generate compilation database
-- import database to your IDE
+- generate *compilation database file*
+- import database to an IDE
 
 ## Generating compilation database
 To create a super-project database for 3 *AOSP* projects:
