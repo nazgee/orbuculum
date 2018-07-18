@@ -8,7 +8,7 @@ Compilation database can be generated in 2 formats
 By default only `compile_commands.json` database file is generated. To generate it *orbuculum* uses [bear](https://github.com/rizsotto/Bear). When given `--json2cmake` option, *orbuculum* will use [json2cmake](https://github.com/AbigailBuccaneer/json2cmake) to additionally generate `CMakeLists.txt` file.
 
 # Prerequisites
-- [bear](https://github.com/rizsotto/Bear) - download, compile & install: `git clone https://github.com/rizsotto/Bear; cd Bear; cmake; make ./; sudo make install`
+- [bear](https://github.com/rizsotto/Bear) - download, compile & install: `git clone https://github.com/rizsotto/Bear; cd Bear; cmake ./; make; sudo make install`
 - [json2cmake](https://github.com/AbigailBuccaneer/json2cmake) install: `pip install --user json2cmake` and create a `json2cmake` executable with the following contents:
 ```bash
 #!/bin/bash
