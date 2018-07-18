@@ -9,7 +9,9 @@ By default only `compile_commands.json` database file is generated. To generate 
 
 # Prerequisites
 - [bear](https://github.com/rizsotto/Bear) - download, compile & install: `git clone https://github.com/rizsotto/Bear; cd Bear; cmake ./; make; sudo make install`
-- [json2cmake](https://github.com/AbigailBuccaneer/json2cmake) install: `pip install --user json2cmake` and create a `json2cmake` executable with the following contents:
+- [json2cmake](https://github.com/AbigailBuccaneer/json2cmake) install: `pip install --user json2cmake`
+
+If `json2cmake` is not available after the steps above (should not usually happen), manually create an executable file with the following contents:
 ```bash
 #!/bin/bash
 python -m json2cmake.__init__
