@@ -1,7 +1,7 @@
 #!/bin/bash
 
-export SOONG_GEN_CMAKEFILES=1
-export SOONG_GEN_CMAKEFILES_DEBUG=1
+#export SOONG_GEN_CMAKEFILES=1
+#export SOONG_GEN_CMAKEFILES_DEBUG=1
 
 # add some colors
 WHITE='\033[1;37m'
@@ -11,6 +11,8 @@ PURPLE='\033[0;35m'
 NC='\033[0m'
 
 _TARGETS=()
+_CLEAN_TARGETS=()
+_OPTIONS=()
 _OUTPUT=$ANDROID_BUILD_TOP/out/development/compile_commands.json
 _CLEAN=0
 _SHOWCOMMANDS=""
@@ -48,7 +50,7 @@ function invokebear() {
 
 function invokeclean() {
 	printf "${GREEN}>>> Cleaning${NC} ${PURPLE}'$1'${NC}\n"
-	printfverbose "$ ${GREEN}make clean-${PURPLE}$1${NC}\n"
+	printfverbose "$ ${GREEN}make ${PURPLE}$1${NC}\n"
 	make clean-$1 $_SHOWCOMMANDS
 	printffail "${RED}>>> Clean failed -- bad target${NC} ${PURPLE}'$1'${NC}\n"
 }
@@ -94,34 +96,35 @@ do
 	--showcommands)
 		_SHOWCOMMANDS="showcommands"
 		;;
+        *=*)
+		printf "Found option ${PURPLE}'$1'${NC}\n"
+		_OPTIONS+=("$1")
+		;;
 	--*)
 		printf "${RED}Ignored bad option${NC} ${PURPLE}'$1'${NC}\n"
 		;;
 	*)
 		_TARGETS+=("$1")
+		_CLEAN_TARGETS+=("clean-$1")
 		;;
     esac
     shift
 done
 
-for target in "${_TARGETS[@]}"
-do
-	# clean if really needed
-	if [ $_CLEAN -eq 1 ]; then
-		invokeclean $target
-	fi
+if [ $_CLEAN -eq 1 ]; then
+	invokeclean "${_OPTIONS[*]} ${_CLEAN_TARGETS[*]}"
+fi
 
-	# build with compilation sniffing
-	invokebear $target
+# build with compilation sniffing
+invokebear "${_OPTIONS[*]} ${_TARGETS[*]}"
 
-	# insert newline
-	echo
-done
+# insert newline
+echo
 
 if [ $_JSON2CMAKE -eq 1 ]; then
 	printf "${GREEN}>>> Running json2cmake in${NC} `dirname $_OUTPUT`\n"
 	cd `dirname $_OUTPUT`
-	json2cmake
+	json2cmake -n $_OUTPUT
 	printffail "${RED}>>> json2cmake failed -- have you installed it?${NC}\n"
 	cd -
 fi
