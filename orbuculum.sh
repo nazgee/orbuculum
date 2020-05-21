@@ -18,6 +18,8 @@ _CLEAN=0
 _SHOWCOMMANDS=""
 _VERBOSE=0
 _JSON2CMAKE=0
+_BUILDER="make"
+_PARAMS=""
 
 function conditionalprintf() {
 	if [ "$1" == "1" ]; then
@@ -43,8 +45,8 @@ function printfverbose() {
 
 function invokebear() {
 	printf "${GREEN}>>> BuildEAR'ing${NC} ${PURPLE}'$@'${NC}\n"
-	printfverbose "$ ${GREEN}bear --use-cc clang --use-c++ clang++ --append --cdb $_OUTPUT make ${PURPLE}$@${NC}\n"
-	bear --use-cc clang --use-c++ clang++ --append --cdb $_OUTPUT make $@ $_SHOWCOMMANDS
+	printfverbose "$ ${GREEN}bear --use-cc clang --use-c++ clang++ --append --cdb $_OUTPUT ${PURPLE}$@${NC}\n"
+	bear --use-cc clang --use-c++ clang++ --append --cdb $_OUTPUT $@ $_SHOWCOMMANDS
 	printffail "${RED}>>> BuildEAR of${NC} ${PURPLE}'$@'${NC} ${RED}failed${NC}\n"
 }
 
@@ -89,6 +91,14 @@ do
 	--json2cmake)
 		_JSON2CMAKE=1
 		;;
+	--builder)
+		_BUILDER="$2"
+		shift
+		;;
+	--params)
+		_PARAMS="$2"
+		shift
+		;;
         --out)
 		_OUTPUT="$2"
 		shift
@@ -116,7 +126,7 @@ if [ $_CLEAN -eq 1 ]; then
 fi
 
 # build with compilation sniffing
-invokebear "${_OPTIONS[*]} ${_TARGETS[*]}"
+invokebear "${_OPTIONS[*]} $_BUILDER ${_TARGETS[*]} $_PARAMS"
 
 # insert newline
 echo
